@@ -1,148 +1,155 @@
 import { Colors } from '@/constants/theme';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Image, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { useState } from 'react';
+import { FlatList, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
+  const tags = [
+    {
+      "id": 1,
+      "tag": 'Semua',
+    },
+    {
+      "id": 2,
+      "tag": 'Sarapan',
+    },
+    {
+      "id": 3,
+      "tag": 'Makan siang',
+    },
+    {
+      "id": 4,
+      "tag": 'Makan siang',
+    },
+    {
+      "id": 5,
+      "tag": 'Makan malam',
+    },
+  ]
+
+  const recipesList = [
+    {
+      "id": 1,
+      "title": "Nasi Goreng",
+      "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
+      "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    },
+    {
+      "id": 2,
+      "title": "Nasi Goreng",
+      "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
+      "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    }
+  ]
+
+  const [active, setActive] = useState(1)
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{ flexGrow: 1 }}
-    >
-      <SafeAreaView style={styles.area}>
-        <View style={styles.posterCard}>
-          <View style={{ alignItems: 'center' }}>
-            <Image source={require('../../assets/images/book.png')} style={{ width: 80, height: 80 }} />
-          </View>
+    <SafeAreaView style={styles.area} edges={['top']}>
+      <View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <View>
-            <Text style={[styles.posterCardText, { fontSize: 25, fontWeight: '500' }]}>ResepKu</Text>
-            <Text style={[styles.posterCardText, { fontSize: 16, fontWeight: '400' }]}>Temukan & bagikan resep favoritmu</Text>
+            <Text style={{ fontSize: 20 }}>Halo, <Text style={{ color: Colors.primary }}>User</Text> 👋</Text>
           </View>
+          <View style={{ width: 40, height: 40, backgroundColor: Colors.primaryLight, borderRadius: 50 }}></View>
         </View>
-        <View style={styles.containInput}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.textInputStyle}>
-              <MaterialIcons name='mail' size={20} />
-              <TextInput
-                placeholder='Email address'
-                style={{ height: 50, flex: 1 }}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.textInputStyle}>
-              <MaterialIcons name='lock' size={20} />
-              <TextInput
-                placeholder='Password'
-                style={{ height: 50, flex: 1 }}
-              />
-            </View>
-          </TouchableWithoutFeedback>
-          <TouchableOpacity style={styles.signInButton}>
-            <Text style={styles.signInText}>Masuk</Text>
-          </TouchableOpacity>
-          <View style={styles.hrStyle}>
-            <View style={styles.lineStyle} />
-            <View>
-              <Text style={{ color: Colors.textSecondary }}>atau</Text>
-            </View>
-            <View style={styles.lineStyle} />
-          </View>
-          <TouchableOpacity style={styles.signUpButton}>
-            <Text style={styles.signUpText}>Daftar Akun Baru</Text>
-          </TouchableOpacity>
-          <View style={styles.containForgotPassword}>
-            <Text style={styles.forgotPasswordText}>Lupa password? </Text>
-            <TouchableOpacity onPress={() => alert('klik')}>
-              <Text style={styles.forgotPasswordBtn}>Reset di sini</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={{
+          marginTop: 20,
+          borderRadius: 10,
+          backgroundColor: Colors.surface,
+
+          shadowColor: '#000',
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowOpacity: 0.08,
+          shadowRadius: 5,
+          elevation: 4,
+        }}>
+
+          <TextInput
+            placeholder='Cari resep'
+            placeholderTextColor={Colors.textTertiary}
+            style={{
+              borderRadius: 10,
+              backgroundColor: Colors.surface,
+            }}
+          />
+
         </View>
-      </SafeAreaView>
-    </ScrollView>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={{ flexDirection: 'row', marginTop: 20, gap: 10 }}>
+            {
+              tags.map((data) => {
+                const isActive = data.id === active
+                return (
+                  <Pressable
+                    key={data.id}
+                    onPress={() => setActive(data.id)}
+                    style={{
+                      backgroundColor: isActive ? Colors.primary : Colors.primarySoft,
+                      paddingVertical: 4,
+                      paddingHorizontal: 5,
+                      borderRadius: 20
+                    }}>
+                    <Text style={{ color: isActive ? Colors.textWhite : Colors.primary }}> {data.tag} </Text>
+                  </Pressable>
+                )
+              })
+            }
+          </View>
+        </ScrollView>
+      </View>
+      <View style={{ flex: 1 }}>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={recipesList}
+          renderItem={({ item }) => {
+            return (
+              <View key={item.id} style={{ 
+                marginTop: 40, 
+                backgroundColor: Colors.surface, 
+                borderRadius: 20,
+                 }}>
+                <View style={{
+                  width: '100%',
+                  height: 200,
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                  overflow: 'hidden'
+                }}>
+                  <Image source={{ uri: item.photo }} resizeMode='cover' style={{ width: '100%', height: 200 }} />
+                  <View style={{ backgroundColor: Colors.primary, paddingHorizontal: 20, paddingVertical: 10, width: 90, borderRadius: 20, position: 'absolute', margin: 6 }}>
+                    <Text style={{ color: Colors.textWhite }}>Populer</Text>
+                  </View>
+                </View>
+                <View style={{ padding: 20 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <View style={{ height: 30, width: 30, backgroundColor: Colors.primaryLight, borderRadius: 50 }}></View>
+                    <Text style={{ fontSize: 16, color: Colors.textSecondary }}>Budi Santoso</Text>
+                  </View>
+                  <Text style={{ fontSize: 20, marginTop: 10 }}>{item.title}</Text>
+                  <View style={{ flexDirection: 'row', gap: 20, marginTop: 10 }}>
+                    <Text style={{ color: Colors.textTertiary }}>30 menit</Text>
+                    <Text style={{ color: Colors.textTertiary }}>4.8</Text>
+                    <Text style={{ color: Colors.textTertiary }}>234</Text>
+                  </View>
+                </View>
+              </View>
+            )
+          }}
+          keyExtractor={item => item.id.toString()}
+          style={{ marginVertical: 10 }}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   area: {
     backgroundColor: Colors.background,
-    flex: 1
-  },
-  posterCard: {
-    height: 250,
-    width: '100%',
-    backgroundColor: Colors.primary,
-    flexDirection: 'column',
-    justifyContent: 'center',
-    paddingVertical: 50, gap: 8,
-    paddingHorizontal: 40
-  },
-  posterCardText: {
-    textAlign: 'center',
-    color: Colors.textWhite
-  },
-  containInput: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-    flexDirection: 'column',
-    gap: 20
-  },
-  textInputStyle: {
-    flexDirection: 'row',
-    backgroundColor: Colors.surface,
-    borderRadius: 10,
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    gap: 10
-  },
-  signInButton: {
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    paddingVertical: 12
-  },
-  signInText: {
-    textAlign: 'center',
-    fontWeight: '500',
-    fontSize: 18,
-    color: Colors.textWhite
-  },
-  hrStyle: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  lineStyle: {
-    height: 1,
-    backgroundColor: Colors.textSecondary,
-    width: '40%'
-  },
-  signUpButton: {
-    backgroundColor: 'white',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    paddingVertical: 12
-  },
-  signUpText: {
-    textAlign: 'center',
-    fontWeight: '500',
-    fontSize: 18,
-    color: Colors.primary
-  },
-  containForgotPassword: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  forgotPasswordText: {
-    color: Colors.textSecondary,
-    fontWeight: '500',
-    fontSize: 15
-  },
-  forgotPasswordBtn: {
-    color: Colors.primary,
-    fontWeight: '500',
-    fontSize: 15
+    flex: 1,
+    paddingHorizontal: 16
   }
 });

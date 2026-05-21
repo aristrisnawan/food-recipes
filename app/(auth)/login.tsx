@@ -3,7 +3,7 @@ import { useLogin } from '@/hooks/useAuth';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Image, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import { ActivityIndicator, Alert, Image, Keyboard, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
@@ -22,93 +22,96 @@ export default function LoginScreen() {
   }
 
   return (
-    <ScrollView
-      keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{ flexGrow: 1 }}
-    >
-      <SafeAreaView style={styles.area}>
-        <View style={styles.posterCard}>
-          <View style={{ alignItems: 'center' }}>
-            <Image source={require('../../assets/images/book.png')} style={{ width: 80, height: 80 }} />
-          </View>
-          <View>
-            <Text style={[styles.posterCardText, { fontSize: 25, fontWeight: '500' }]}>ResepKu</Text>
-            <Text style={[styles.posterCardText, { fontSize: 16, fontWeight: '400' }]}>Temukan & bagikan resep favoritmu</Text>
-          </View>
-        </View>
-        <View style={styles.containInput}>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.textInputStyle}>
-              <MaterialIcons name='mail' size={20} />
-              <TextInput
-                placeholder='Email address'
-                placeholderTextColor={Colors.textTertiary}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType='email-address'
-                autoCapitalize='none'
-                style={{ height: 50, flex: 1 }}
-              />
+    <SafeAreaView style={styles.area}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
+          <View style={styles.posterCard}>
+            <View style={{ alignItems: 'center' }}>
+              <Image source={require('../../assets/images/book.png')} style={{ width: 80, height: 80 }} />
             </View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.textInputStyle}>
-              <MaterialIcons name='lock' size={20} />
-              <TextInput
-                placeholder='Password'
-                placeholderTextColor={Colors.textTertiary}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry={!showPass}
-                style={{ height: 50, flex: 1 }}
-              />
-              <TouchableOpacity onPress={() => setShowPass(!showPass)}>
-                <MaterialIcons
-                  name={showPass ? 'visibility' : 'visibility-off'}
-                  size={20}
-                  color={Colors.textTertiary}
+            <View>
+              <Text style={[styles.posterCardText, { fontSize: 25, fontWeight: '500' }]}>ResepKu</Text>
+              <Text style={[styles.posterCardText, { fontSize: 16, fontWeight: '400' }]}>Temukan & bagikan resep favoritmu</Text>
+            </View>
+          </View>
+          <View style={styles.containInput}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.textInputStyle}>
+                <MaterialIcons name='mail' size={20} />
+                <TextInput
+                  placeholder='Email address'
+                  placeholderTextColor={Colors.textTertiary}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType='email-address'
+                  autoCapitalize='none'
+                  style={{ height: 50, flex: 1 }}
                 />
+              </View>
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={styles.textInputStyle}>
+                <MaterialIcons name='lock' size={20} />
+                <TextInput
+                  placeholder='Password'
+                  placeholderTextColor={Colors.textTertiary}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPass}
+                  style={{ height: 50, flex: 1 }}
+                />
+                <TouchableOpacity onPress={() => setShowPass(!showPass)}>
+                  <MaterialIcons
+                    name={showPass ? 'visibility' : 'visibility-off'}
+                    size={20}
+                    color={Colors.textTertiary}
+                  />
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+            {
+              error && (
+                <Text style={styles.errorText}>
+                  {(error as any).response?.data?.msg || 'Login gagal, coba lagi'}
+                </Text>
+              )
+            }
+            <TouchableOpacity
+              onPress={handleLogin}
+              disabled={isPending}
+              style={styles.signInButton}>
+              {
+                isPending ?
+                  <ActivityIndicator color={Colors.textWhite} /> :
+                  <Text style={styles.signInText}>Masuk</Text>
+              }
+            </TouchableOpacity>
+            <View style={styles.hrStyle}>
+              <View style={styles.lineStyle} />
+              <View>
+                <Text style={{ color: Colors.textSecondary }}>atau</Text>
+              </View>
+              <View style={styles.lineStyle} />
+            </View>
+            <TouchableOpacity
+              onPress={() => router.push('/(auth)/register')}
+              style={styles.signUpButton}>
+              <Text style={styles.signUpText}>Daftar akun baru</Text>
+            </TouchableOpacity>
+            <View style={styles.containForgotPassword}>
+              <Text style={styles.forgotPasswordText}>Lupa password? </Text>
+              <TouchableOpacity onPress={() => alert('Sedang dalam pengembangan')}>
+                <Text style={styles.forgotPasswordBtn}>Reset akun</Text>
               </TouchableOpacity>
             </View>
-          </TouchableWithoutFeedback>
-          {
-            error && (
-              <Text style={styles.errorText}>
-                {(error as any).response?.data?.msg || 'Login gagal, coba lagi'}
-              </Text>
-            )
-          }
-          <TouchableOpacity
-            onPress={handleLogin}
-            disabled={isPending}
-            style={styles.signInButton}>
-            {
-              isPending ?
-                <ActivityIndicator color={Colors.textWhite} /> :
-                <Text style={styles.signInText}>Masuk</Text>
-            }
-          </TouchableOpacity>
-          <View style={styles.hrStyle}>
-            <View style={styles.lineStyle} />
-            <View>
-              <Text style={{ color: Colors.textSecondary }}>atau</Text>
-            </View>
-            <View style={styles.lineStyle} />
           </View>
-          <TouchableOpacity 
-          onPress={() => router.push('/(auth)/register')}
-          style={styles.signUpButton}>
-            <Text style={styles.signUpText}>Daftar akun baru</Text>
-          </TouchableOpacity>
-          <View style={styles.containForgotPassword}>
-            <Text style={styles.forgotPasswordText}>Lupa password? </Text>
-            <TouchableOpacity onPress={() => alert('klik')}>
-              <Text style={styles.forgotPasswordBtn}>Reset akun</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </SafeAreaView>
-    </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
