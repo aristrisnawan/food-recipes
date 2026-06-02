@@ -1,9 +1,11 @@
 import { Colors } from '@/constants/theme';
+import { useUpload } from '@/hooks/useRecipes';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import * as ImagePicker from 'expo-image-picker';
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import {
+    ActivityIndicator,
     Alert, Image, KeyboardAvoidingView, Platform, Pressable,
     ScrollView,
     StyleSheet, Text,
@@ -11,15 +13,37 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+
+
+const categories = [
+    { label: 'Sarapan', value: 'Sarapan' },
+    { label: 'Makan Siang', value: 'Makan Siang' },
+    { label: 'Makan Malam', value: 'Makan Malam' },
+    { label: 'Dessert', value: 'Dessert' },
+    { label: 'Minuman', value: 'Minuman' },
+    { label: 'Snack', value: 'Snack' },
+]
+
 export default function UploadScreen() {
+    const { mutate: upload, isPending, error } = useUpload()
+    const [selectedCategory, setSelectedCategory] = useState(null);
     const [photoUri, setPhotoUri] = useState<string | null>(null);
+    const [title, setTitle] = useState('')
+    const [description, setDescription] = useState('')
+    const [duration, setDuration] = useState('')
+
 
     useFocusEffect(
         useCallback(() => {
             return () => {
                 setPhotoUri(null)
+                setSelectedCategory(null)
+                setTitle('')
+                setDescription('')
+                setDuration('')
             }
         }, [])
     )
@@ -62,13 +86,29 @@ export default function UploadScreen() {
         ]);
     };
 
+    const handleUpload = () => {
+        if (!photoUri || !title || !description || !duration || !selectedCategory) {
+            Alert.alert('Upload Gagal', 'Semua field harus diisi')
+            return
+        }
+
+        upload({ title, description, duration, photo: photoUri, category: selectedCategory })
+    }
+
+
 
     return (
         <SafeAreaView style={styles.area} edges={['top']}>
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <ScrollView style={styles.scroll}>
+                <ScrollView style={styles.scroll}
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{
+                        paddingBottom: 150,
+                    }}
+                    keyboardShouldPersistTaps="handled"
+                >
                     <Text style={styles.header}>Upload Resep</Text>
 
                     <Text style={styles.label}>Foto resep<Text style={styles.required}>*</Text></Text>
@@ -95,6 +135,8 @@ export default function UploadScreen() {
                             placeholderTextColor={Colors.textTertiary}
                             placeholder='Contoh: Nasi Goreng Spesial'
                             style={styles.textInput}
+                            value={title}
+                            onChangeText={setTitle}
                         />
                     </View>
                     <Text style={styles.label}>Deskripsi <Text style={styles.required}>*</Text></Text>
@@ -105,9 +147,11 @@ export default function UploadScreen() {
                             placeholderTextColor={Colors.textTertiary}
                             placeholder='Tulis bahan-bahan dan cara memasak...'
                             style={styles.textArea}
+                            value={description}
+                            onChangeText={setDescription}
                         />
                     </View>
-                    <Text style={styles.label}>Waktu Memasak</Text>
+                    <Text style={styles.label}>Waktu Memasak <Text style={styles.required}> *</Text></Text>
                     <View>
                         <TextInput
                             multiline={true}
@@ -115,11 +159,33 @@ export default function UploadScreen() {
                             placeholderTextColor={Colors.textTertiary}
                             placeholder='Contoh: 30 Menit'
                             style={styles.textInput}
+                            value={duration}
+                            onChangeText={setDuration}
+                        />
+                    </View>
+                    <Text style={styles.label}>Category <Text style={styles.required}> *</Text></Text>
+                    <View>
+                        <Dropdown
+                            style={styles.dropdown}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            data={categories}
+                            labelField="label"
+                            valueField="value"
+                            placeholder="Pilih kategori"
+                            value={selectedCategory}
+                            onChange={(item) => {
+                                setSelectedCategory(item.value)
+                            }}
                         />
                     </View>
                     <View style={{ marginTop: 20, marginBottom: 20 }}>
-                        <TouchableOpacity style={styles.btnUpload}>
-                            <Text style={styles.textUpload}>Upload Resep</Text>
+                        <TouchableOpacity disabled={isPending} style={styles.btnUpload} onPress={handleUpload}>
+                            {
+                                isPending ?
+                                    <ActivityIndicator color={Colors.textWhite} /> :
+                                    <Text style={styles.textUpload}>Upload Resep</Text>
+                            }
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
@@ -216,5 +282,21 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: 18,
         color: Colors.textWhite
-    }
+    },
+    dropdown: {
+        marginTop: 10,
+        height: 50,
+        backgroundColor: Colors.surface,
+        borderRadius: 10,
+        paddingHorizontal: 12,
+    },
+
+    placeholderStyle: {
+        fontSize: 16,
+        color: Colors.textTertiary,
+    },
+
+    selectedTextStyle: {
+        fontSize: 16,
+    },
 });
