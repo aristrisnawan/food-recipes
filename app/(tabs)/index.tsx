@@ -1,5 +1,6 @@
 import RecipeCard from '@/components/recipe/RecipeCard';
 import { Colors } from '@/constants/theme';
+import { useGetRecipes } from '@/hooks/useRecipes';
 import { useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -28,28 +29,30 @@ export default function HomeScreen() {
     },
   ]
 
-  const recipesList = [
-    {
-      "id": 1,
-      "title": "Nasi Goreng",
-      "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
-      "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-    },
-    {
-      "id": 2,
-      "title": "Nasi Goreng",
-      "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
-      "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-    },
-    {
-      "id": 3,
-      "title": "Nasi Goreng Enak banget",
-      "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
-      "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
-    }
-  ]
+  // const recipesList = [
+  //   {
+  //     "id": 1,
+  //     "title": "Nasi Goreng",
+  //     "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
+  //     "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  //   },
+  //   {
+  //     "id": 2,
+  //     "title": "Nasi Goreng",
+  //     "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
+  //     "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  //   },
+  //   {
+  //     "id": 3,
+  //     "title": "Nasi Goreng Enak banget",
+  //     "description": "Nasi goreng dibuat dengan cara menggoreng nasi bersama bumbu dan bahan pelengkap hingga tercampur sempurna dan menghasilkan rasa yang gurih serta aroma yang khas. Proses pembuatannya dimulai dengan menumis bawang putih dan bawang merah hingga harum, kemudian ditambahkan cabai sesuai selera. Setelah itu, masukkan telur, ayam, sosis, atau bahan lain yang diinginkan lalu aduk hingga matang. Nasi putih yang sudah dingin kemudian dimasukkan ke dalam wajan dan dicampur bersama kecap manis, garam, merica, serta penyedap agar bumbunya merata. Semua bahan digoreng dengan api sedang hingga nasi sedikit kering dan beraroma harum. Nasi goreng biasanya disajikan dengan pelengkap seperti kerupuk, acar, irisan mentimun, dan telur mata sapi agar rasanya semakin nikmat.",
+  //     "photo": 'https://images.unsplash.com/photo-1680674774705-90b4904b3a7f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+  //   }
+  // ]
 
   const [active, setActive] = useState(1)
+  const {data, isLoading, error} = useGetRecipes()
+  console.log('ini', data)
   return (
     <SafeAreaView style={styles.area} edges={['top']}>
       <View>
@@ -110,7 +113,7 @@ export default function HomeScreen() {
       <View style={{ flex: 1 }}>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={recipesList}
+          data={data}
           renderItem={({ item }) => <RecipeCard item={item} />}
           keyExtractor={item => item.id.toString()}
           style={{ marginVertical: 10 }}

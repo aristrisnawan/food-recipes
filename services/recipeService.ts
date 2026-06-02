@@ -36,6 +36,8 @@ export const recipeService = {
         )
 
         return response.data
-    }
+    },
+
+    getRecipes: () => api.get('/recipes')
 
 }

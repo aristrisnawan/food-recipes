@@ -76,7 +76,7 @@ export default function UploadScreen() {
                         mediaTypes: ['images'],
                         allowsEditing: true,
                         aspect: [4, 3],
-                        quality: 0.8,
+                        quality: 0.5,
                     });
 
                     if (!result.canceled) setPhotoUri(result.assets[0].uri);

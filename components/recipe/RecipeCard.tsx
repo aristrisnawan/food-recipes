@@ -1,10 +1,11 @@
 import { Colors } from "@/constants/theme";
-import { Recipe } from "@/types/recipe.types";
+import { IRecipe } from "@/types/recipe.types";
+import { Avatar } from '@kolking/react-native-avatar';
 import { Image, StyleSheet, Text, View } from "react-native";
 
 
 interface Props {
-    item: Recipe
+    item: IRecipe
 }
 export default function RecipeCard({ item }: Props) {
     return (
@@ -17,14 +18,19 @@ export default function RecipeCard({ item }: Props) {
             </View>
             <View style={styles.containDescribe}>
                 <View style={styles.describeProfile}>
-                    <View style={styles.containPhotoProfile}></View>
-                    <Text style={styles.author}>Budi Santoso</Text>
+                    <View style={styles.containPhotoProfile}>
+                        {item.author.photo === "" ? <Avatar email={item.author.email} name={item.author.name} size={30}/> : <Image
+                            source={{ uri: item.author.photo }}
+                            style={styles.profileImage}
+                        />}
+                    </View>
+                    <Text style={styles.author}>{item.author.name}</Text>
                 </View>
                 <Text style={styles.title}>{item.title}</Text>
                 <View style={styles.containSpesifikasi}>
-                    <Text style={styles.textSpesifikasi}>30 menit</Text>
-                    <Text style={styles.textSpesifikasi}>4.8</Text>
-                    <Text style={styles.textSpesifikasi}>234</Text>
+                    <Text style={styles.textSpesifikasi}>{item.duration}</Text>
+                    <Text style={styles.textSpesifikasi}>{item.ratings.length} ★ </Text>
+                    <Text style={styles.textSpesifikasi}>{item.likes.length} 🖤</Text>
                 </View>
             </View>
         </View>
@@ -72,7 +78,13 @@ const styles = StyleSheet.create({
         height: 30,
         width: 30,
         backgroundColor: Colors.primaryLight,
-        borderRadius: 50
+        borderRadius: 50,
+        overflow: 'hidden'
+    },
+    profileImage: {
+        width: '100%',
+        height: '100%',
+        borderRadius: 15,
     },
     author: {
         fontSize: 16,
